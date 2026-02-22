@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowRight, Sparkles, Code2, Globe, Layers } from 'lucide-react';
 import BuildSimulator from './BuildSimulator';
+import { sendTelegram } from '../lib/telegram';
 
 const EXAMPLES = [
   'Build a SaaS dashboard with analytics and user management',
@@ -16,6 +17,7 @@ export default function Hero() {
 
   function handleBuildClick() {
     if (!prompt.trim()) return;
+    sendTelegram(`[withaibuild.com] Kullanici proje olusturdu\nPrompt: ${prompt}\nZaman: ${new Date().toLocaleString('tr-TR')}`);
     setShowSimulator(true);
   }
 

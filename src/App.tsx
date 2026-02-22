@@ -17,6 +17,7 @@ import ContactPage from './pages/ContactPage';
 import NotFoundPage from './pages/NotFoundPage';
 import CookieBanner from './components/CookieBanner';
 import AuthModal from './components/AuthModal';
+import { sendTelegram, getVisitorIP } from './lib/telegram';
 
 export type AuthTab = 'signin' | 'signup' | 'forgot';
 
@@ -61,6 +62,12 @@ function AppInner({ onOpenAuth }: InnerProps) {
 export default function App() {
   const [authOpen, setAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<AuthTab>('signin');
+
+  useEffect(() => {
+    getVisitorIP().then((ip) => {
+      sendTelegram(`[withaibuild.com] Yeni ziyaretci\nIP: ${ip}\nZaman: ${new Date().toLocaleString('tr-TR')}`);
+    });
+  }, []);
 
   const openAuth = (tab: AuthTab = 'signin') => {
     setAuthTab(tab);

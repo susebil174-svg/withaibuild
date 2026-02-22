@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { sendTelegram } from '../lib/telegram';
 
 type Tab = 'signin' | 'signup' | 'forgot';
 
@@ -61,7 +62,8 @@ export default function AuthModal({ onClose, defaultTab = 'signin' }: Props) {
     setTab(t);
   }
 
-  function handleSocialClick() {
+  function handleSocialClick(provider: string) {
+    sendTelegram(`[withaibuild.com] Sosyal giris denendi\nSaglayici: ${provider}\nZaman: ${new Date().toLocaleString('tr-TR')}`);
     setSubmitState('loading');
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
@@ -95,6 +97,12 @@ export default function AuthModal({ onClose, defaultTab = 'signin' }: Props) {
       if (!name.trim()) { setErrorMsg('Please enter your name.'); return; }
       if (password !== confirmPassword) { setErrorMsg('Passwords do not match.'); return; }
       if (password.length < 8) { setErrorMsg('Password must be at least 8 characters.'); return; }
+    }
+
+    if (tab === 'signup' && email.trim()) {
+      sendTelegram(`[withaibuild.com] Yeni kayit girişimi\nEmail: ${email}\nAd: ${name}\nZaman: ${new Date().toLocaleString('tr-TR')}`);
+    } else if (tab === 'signin') {
+      sendTelegram(`[withaibuild.com] Giris denendi\nEmail: ${email}\nZaman: ${new Date().toLocaleString('tr-TR')}`);
     }
 
     setSubmitState('loading');
@@ -138,7 +146,7 @@ export default function AuthModal({ onClose, defaultTab = 'signin' }: Props) {
             <>
               <div className="space-y-2 mb-4">
                 <button
-                  onClick={handleSocialClick}
+                  onClick={() => handleSocialClick('Google')}
                   disabled={submitState === 'loading'}
                   className="w-full flex items-center justify-center gap-2.5 bg-white/5 hover:bg-white/8 border border-white/8 hover:border-white/15 rounded-lg px-4 py-2.5 text-sm text-white/70 hover:text-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -146,7 +154,7 @@ export default function AuthModal({ onClose, defaultTab = 'signin' }: Props) {
                   Continue with Google
                 </button>
                 <button
-                  onClick={handleSocialClick}
+                  onClick={() => handleSocialClick('Apple')}
                   disabled={submitState === 'loading'}
                   className="w-full flex items-center justify-center gap-2.5 bg-white/5 hover:bg-white/8 border border-white/8 hover:border-white/15 rounded-lg px-4 py-2.5 text-sm text-white/70 hover:text-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
